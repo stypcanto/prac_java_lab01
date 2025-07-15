@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  lab01-tomcat:
+    image: lab01-tomcat
+    container_name: lab01-tomcat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"  # Usa otro puerto si el 8080 ya está ocupado
+
+# Para actualizar datos de lso cambios que genero
+# mvn clean package
+#docker-compose up --build -d

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Empleado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #msg {
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+
+    <!-- jQuery -->
+    <script src="jq/jquery-3.3.1.min.js"></script>
+
+    <!-- Flatpickr (CSS + JS) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Inicializar Flatpickr en español
+            flatpickr("#nacimiento", {
+                dateFormat: "Y-m-d",      // Formato enviado al backend (yyyy-MM-dd)
+                altInput: true,           // Muestra una versión más amigable al usuario
+                altFormat: "d/m/Y",       // Formato mostrado (dd/MM/yyyy)
+                maxDate: "today",         // No permite fechas futuras
+                locale: "es"
+            });
+
+            // Manejo del formulario
+            $("#formulario").submit(function(e) {
+                e.preventDefault(); // evita envío clásico
+
+                $.ajax({
+                    url: "valida", // esta es la URL de tu servlet
+                    type: "POST",
+                    data: {
+                        nombre: $("#nombre").val(),
+                        nacimiento: $("#nacimiento").val(),
+                        sueldo: $("#sueldo").val()
+                    },
+                    success: function(data) {
+                        $("#msg").html(data); // muestra respuesta HTML del servlet
+                    },
+                    error: function() {
+                        $("#msg").html("<span style='color:red;'>Error al enviar los datos.</span>");
+                    }
+                });
+            });
+        });
+    </script>
+
+
+</head>
+<body>
+
+<div class="form-container">
+    <h3>Ingrese datos correctamente</h3>
+    <div id="msg"></div>
+
+    <form action="valida" method="post">
+
+    <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Ej. Styp Canto" required>
+
+        <label for="nacimiento">Fecha de nacimiento</label>
+        <input type="text" id="nacimiento" name="nacimiento" placeholder="dd/mm/yyyy" required>
+
+
+        <label for="sueldo">Sueldo mensual (S/.)</label>
+        <input type="number" id="sueldo" name="sueldo" min="0" step="0.01" required>
+
+        <input type="submit" value="Registrar">
+    </form>
+</div>
+
+</body>
+</html>
