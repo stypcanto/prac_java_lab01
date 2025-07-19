@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro de Empleado</title>
+
+    <!-- Estilos para diseño moderno -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,64 +71,68 @@
         }
     </style>
 
-    <!-- jQuery -->
+    <!-- jQuery para AJAX -->
     <script src="jq/jquery-3.3.1.min.js"></script>
 
-    <!-- Flatpickr (CSS + JS) -->
+    <!-- Flatpickr para mejorar la selección de fechas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
+    <!-- Script para inicializar y manejar el formulario -->
     <script>
-        $(document).ready(function() {
-            // Inicializar Flatpickr en español
+        $(document).ready(function () {
+            // Configurar Flatpickr en español
             flatpickr("#nacimiento", {
-                dateFormat: "Y-m-d",      // Formato enviado al backend (yyyy-MM-dd)
-                altInput: true,           // Muestra una versión más amigable al usuario
-                altFormat: "d/m/Y",       // Formato mostrado (dd/MM/yyyy)
-                maxDate: "today",         // No permite fechas futuras
+                dateFormat: "Y-m-d",       // Formato que el servlet espera (yyyy-MM-dd)
+                altInput: true,            // Entrada visible amigable
+                altFormat: "d/m/Y",        // Formato mostrado al usuario
+                maxDate: "today",          // No permite fechas futuras
                 locale: "es"
             });
 
-            // Manejo del formulario
-            $("#formulario").submit(function(e) {
-                e.preventDefault(); // evita envío clásico
+            // Interceptar el envío del formulario para usar AJAX
+            $("#formulario").submit(function (e) {
+                e.preventDefault(); // Prevenir envío clásico (sin recargar)
 
+                // Realizar la solicitud AJAX al servlet
                 $.ajax({
-                    url: "valida", // esta es la URL de tu servlet
+                    url: "valida", // URL del servlet (mapeado como /valida)
                     type: "POST",
                     data: {
                         nombre: $("#nombre").val(),
                         nacimiento: $("#nacimiento").val(),
                         sueldo: $("#sueldo").val()
                     },
-                    success: function(data) {
-                        $("#msg").html(data); // muestra respuesta HTML del servlet
+                    success: function (data) {
+                        // Mostrar la respuesta del servlet en el div #msg
+                        $("#msg").html(data);
                     },
-                    error: function() {
+                    error: function () {
+                        // Mostrar mensaje de error si falla
                         $("#msg").html("<span style='color:red;'>Error al enviar los datos.</span>");
                     }
                 });
             });
         });
     </script>
-
-
 </head>
+
 <body>
 
 <div class="form-container">
     <h3>Ingrese datos correctamente</h3>
+
+    <!-- Div donde se mostrará la respuesta del servlet -->
     <div id="msg"></div>
 
-    <form action="valida" method="post">
-
-    <label for="nombre">Nombre completo</label>
+    <!-- Formulario con ID requerido para que AJAX funcione -->
+    <form id="formulario" action="valida" method="post">
+        <label for="nombre">Nombre completo</label>
         <input type="text" id="nombre" name="nombre" placeholder="Ej. Styp Canto" required>
 
         <label for="nacimiento">Fecha de nacimiento</label>
         <input type="text" id="nacimiento" name="nacimiento" placeholder="dd/mm/yyyy" required>
-
 
         <label for="sueldo">Sueldo mensual (S/.)</label>
         <input type="number" id="sueldo" name="sueldo" min="0" step="0.01" required>
